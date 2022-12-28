@@ -466,17 +466,23 @@ class UserTeamState extends State<addUserPage>{
               ),
             ) :
             firstSearch ? getListUsers() : performSearch(),
-            TextButton(
-              onPressed: (){
-                getMoreUsers();
-              },
-              child: Text("More data"),
-            ),
-            TextButton(
-              onPressed: (){
-                Navigator.pop(context, checkedUsers);
-              },
-              child: Text("Añadir usuarios"),
+            Container(
+              child: Column(
+                children: [
+                  TextButton(
+                    onPressed: (){
+                      getMoreUsers();
+                    },
+                    child: Text("More data"),
+                  ),
+                  TextButton(
+                    onPressed: (){
+                      Navigator.pop(context, checkedUsers);
+                    },
+                    child: Text("Añadir usuarios"),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -636,9 +642,8 @@ class UserTeamState extends State<addUserPage>{
   }
 
   Widget getListUsers(){
-    return Flexible(
-      child: ListView.builder(
-        controller: scroll,
+    return Flexible(child: ListView.builder(
+      controller: scroll,
       itemCount: usersData == null ? 0 : usersData.length,
       itemBuilder: (BuildContext context, int index){
         if(index == usersData.length){

@@ -18,6 +18,7 @@ import 'myTeam.dart';
 import 'package:intl/intl.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 //import 'dart:html';
 
 class HomePage extends StatefulWidget{
@@ -110,16 +111,24 @@ class _HomePageState extends State<HomePage>{
           idEvents.add(wall[i]["idElement"]);
         }//Arreglar lo del nombre de los eventos**************
         //Hacer clickable tanto las ofertas como los eventos****** 
+        print("Wall admin: " + "${wall}");
       }
     });
   }
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  
+  void setFirestore() async{
+    //await Firebase.initializeApp();
+    firestore = FirebaseFirestore.instance;
+  }
+
   List idTeams = [];
   Future<void> getWall() async{
     idTeams = widget.profileData[0]["idTeam"].split("/");
     /*http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getWall/${idTeams}'));
     Map data = json.decode(response.body);*/
+    
     //coger solo unos datos determinados:
     firestore
       .collection("wall")
@@ -834,6 +843,7 @@ class _HomePageState extends State<HomePage>{
             child: RefreshIndicator(
               onRefresh: updateFun,
               child: ListView.builder(
+                key: Key("wallList"),
                 controller: scroll,
                 itemCount: wallData == null ? 0 : wallData.length + 1,
                 itemBuilder: (BuildContext context, int index){
@@ -936,10 +946,11 @@ class _HomePageState extends State<HomePage>{
                                 Text("${wallData[index]["reward"]} ${wallData[index]["typeReward"]}", style: TextStyle(color: Color(0xff1B2434), fontSize: 12, fontWeight: FontWeight.bold , fontFamily: 'comfortaa',),),
                                 MaterialButton(
                                   child: Container(
+                                    key: Key("${wallData[index]["title"]}"),
                                     child: Text("Enviar Oportunidad", style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'roboto',),
                                     )
                                   ),
-                                  color: Color(0xff1B2434),
+                                  color: Colors.blue.shade900,//Color(0xff1B2434),
                                   splashColor: Color(0xff303C50),
                                   onPressed: (){
                                     //print(getUser(wallData[index]["id"]));
@@ -1455,6 +1466,7 @@ class _HomePageState extends State<HomePage>{
 
   Widget DrawerBlock(){
     return Drawer(
+      key: Key("drawer"),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[

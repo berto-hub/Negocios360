@@ -75,8 +75,9 @@ class Team extends State<TeamPage>{
         teamData = data["team"];
       });
     //}
-    getUsers();
     print(teamData);
+    getUsers();
+    
     //print(idUsers);
   }
 
@@ -437,6 +438,9 @@ class Team extends State<TeamPage>{
       searchKey = name[0] + name.substring(1);
     }
     
+    String idTeam = widget.idTeam; //20 chars
+    bool noMoreElements = false;
+
     return firestore
       .collection("users")
       .where("idTeam", isEqualTo: widget.idTeam)
@@ -482,6 +486,50 @@ class Team extends State<TeamPage>{
 
         return filterUsers;
       });
+  }
+
+  void searchResManMayus(String name) {
+    List resman = [];
+    // code to convert the first character to uppercase
+    String searchKey;
+    if(name[0] != name[0].toLowerCase()){
+      searchKey = name[0].toLowerCase() + name.substring(1);
+    }else{
+      searchKey = name[0] + name.substring(1);
+    }
+
+    for(int i=0; i < usersData.length; i++){
+      if(usersData[i]["role"] == "manager" && usersData[i]["idTeam"].length > 20){
+        if(usersData[i]["name"].contains(searchKey)){
+          setState(() {
+            filterUsers.add(usersData[i]);
+            print(usersData[i]);
+          });
+        }
+      }
+    }
+  }
+
+  void searchResManMinus(String name) {
+    List resman = [];
+    // code to convert the first character to uppercase
+    String searchKey;
+    if(name[0] != name[0].toUpperCase()){
+      searchKey = name[0].toUpperCase() + name.substring(1);
+    }else{
+      searchKey = name[0] + name.substring(1);
+    }
+
+    for(int i=0; i < usersData.length; i++){
+      if(usersData[i]["role"] == "manager" && usersData[i]["idTeam"].length > 20){
+        if(usersData[i]["name"].contains(searchKey)){
+          setState(() {
+            filterUsers.add(usersData[i]);
+            print(usersData[i]);
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -530,6 +578,7 @@ class Team extends State<TeamPage>{
         title: Text("Mi equipo"),
         backgroundColor: Colors.blue.shade800,
         leading: IconButton(
+          key: Key("Back"),
           onPressed: (){
             Navigator.pop(context, numUs);
           }, 
@@ -542,6 +591,7 @@ class Team extends State<TeamPage>{
         null :
         <Widget>[
           IconButton(
+            key: Key("Back"),
             onPressed: (){
               Navigator.pop(context);
             }, 
@@ -751,8 +801,10 @@ class Team extends State<TeamPage>{
                     setState(() {
                       result = searchView.text;
                       if(firstSearch == true){
-                        searchUsersMayus(result);//Tengo que hacer que solo busque una vez.
+                        searchUsersMayus(result);
                         searchUsersMinus(result);
+                        searchResManMayus(result);
+                        searchResManMinus(result);
                       }
                       firstSearch = false;
                     });
@@ -790,13 +842,16 @@ class Team extends State<TeamPage>{
                 children: <Widget>[
                   Card(
                     child: ListTile(
+                      key: index == 0 ? Key("winTeam") : Key("otherTeams"),
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage(usersData[index]["image"]),
                         radius: 30.0,
                       ),
                       title: Padding(
+                        key: index == 0 ? Key("winTeam") : Key("otherTeams"),
                         padding: const EdgeInsets.all(2.0),
                         child: Text("${usersData[index]["name"]}",
+                          key: index == 0 ? Key("winTeam") : Key("otherTeams"),
                           style: TextStyle(color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
                             fontWeight: FontWeight.bold,
                           ),

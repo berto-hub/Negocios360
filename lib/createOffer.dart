@@ -239,6 +239,7 @@ class OfferCreation extends State<CreateOfferPage> {
                           color: Colors.grey
                         ),
                         suffixIcon: IconButton(
+                          key: Key("team"),
                           icon: Icon(Icons.arrow_circle_down),
                           onPressed: (){
                             showDialog(
@@ -304,6 +305,7 @@ class OfferCreation extends State<CreateOfferPage> {
                     ),
                     padding: const EdgeInsets.all(3.0),
                     child: TextField(
+                      key: Key("title"),
                       style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
                       controller: titleCont,
                       decoration: InputDecoration(
@@ -331,6 +333,7 @@ class OfferCreation extends State<CreateOfferPage> {
                     ),
                     padding: const EdgeInsets.all(3.0),
                     child: TextField(
+                      key: Key("description"),
                       style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
                       controller: desCont,
                       decoration: InputDecoration(
@@ -346,105 +349,111 @@ class OfferCreation extends State<CreateOfferPage> {
                 ),
               ),
               
-              Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      padding: EdgeInsets.only(top: 5.0),
-                      width: 150,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(10),
-                        elevation: 2,
+              Container(
+                child: Material(
+                  child: Row(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: Container(
-                          decoration: BoxDecoration(
+                          padding: EdgeInsets.only(top: 5.0),
+                          width: 150,
+                          child: Material(
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey)
-                          ),
-                          padding: const EdgeInsets.all(3.0),
-                          child: TextField(
-                            style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
-                            controller: reCont,
-                            decoration: InputDecoration(
-                              labelText: "Recompensa",
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                color: Colors.grey
+                            elevation: 2,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.grey)
                               ),
-                            ),
-                            textAlign: TextAlign.left,
-                          )
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  IconButton(
-                    onPressed: () {
-                      showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Info'),
-                          content: const Text('Campo donde se introduce la recompensa por oportunidad deseada.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, 'OK'),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.info_rounded)
-                  ),
-
-                  Container(
-                    padding: EdgeInsets.only(top: 5.0),
-                    width: 150,
-                    child: Material(
-                      borderRadius: BorderRadius.circular(10),
-                      elevation: 2,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey)
-                        ),
-                        padding: const EdgeInsets.all(3.0),
-                        child: TextField(
-                          style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
-                          controller: typeReCont,
-                          decoration: InputDecoration(
-                            labelText: "Tipo de recompensa",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(
-                              color: Colors.grey
-                            ),
-                            suffixIcon: PopupMenuButton<String>(
-                              color: Colors.blue,
-                              icon: Icon(Icons.arrow_drop_down),
-                              onSelected: (String result){
-                                setState(() {
-                                  typeReCont.text = result;
-                                });
-                              },
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                PopupMenuItem<String>(
-                                  value: '%',
-                                  child: Text('%'),
+                              padding: const EdgeInsets.all(3.0),
+                              child: TextField(
+                                key: Key("reward"),
+                                style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+                                controller: reCont,
+                                decoration: InputDecoration(
+                                  labelText: "Recompensa",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                  ),
                                 ),
-                                PopupMenuItem<String>(
-                                  value: '€',
-                                  child: Text('€'),
-                                ),
-                              ]
+                                textAlign: TextAlign.left,
+                              )
                             ),
                           ),
-                          textAlign: TextAlign.left,
-                        )
+                        ),
                       ),
-                    ),
+                
+                      IconButton(
+                        onPressed: () {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Info'),
+                              content: const Text('Campo donde se introduce la recompensa por oportunidad deseada.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'OK'),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.info_rounded)
+                      ),
+                
+                      Container(
+                        padding: EdgeInsets.only(top: 5.0),
+                        width: 150,
+                        child: Material(
+                          borderRadius: BorderRadius.circular(10),
+                          elevation: 2,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey)
+                            ),
+                            padding: const EdgeInsets.all(3.0),
+                            child: TextField(
+                              key: Key("typeReward"),
+                              style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+                              controller: typeReCont,
+                              decoration: InputDecoration(
+                                labelText: "Tipo de recompensa",
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                  color: Colors.grey
+                                ),
+                                suffixIcon: PopupMenuButton<String>(
+                                  color: Colors.white,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  onSelected: (String result){
+                                    setState(() {
+                                      typeReCont.text = result;
+                                    });
+                                  },
+                                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                    PopupMenuItem<String>(
+                                      value: '%',
+                                      child: Text('%'),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: '€',
+                                      child: Text('€'),
+                                    ),
+                                  ]
+                                ),
+                              ),
+                              textAlign: TextAlign.left,
+                            )
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
               
               Padding(
@@ -491,6 +500,7 @@ class OfferCreation extends State<CreateOfferPage> {
                 child: Row(
                   children: <Widget>[
                     Checkbox(
+                      key: Key("public wall"),
                       checkColor: Colors.white,
                       value: wall,
                       onChanged: (bool? value) {
@@ -570,6 +580,9 @@ class OfferCreation extends State<CreateOfferPage> {
         'video': "",
       };
       print(newOffer);
+
+      ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text("Se ha creado la oferta ${titleCont.text}")));
 
       if(response.statusCode==204){
         Navigator.pop(context, newOffer);

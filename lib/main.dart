@@ -14,7 +14,7 @@ import 'sendOportunity.dart';
 import 'editMyProfile.dart';
 import 'createOffer.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -59,7 +59,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-
+  //final FirebaseFirestore firestore = FirebaseFirestore.instanceFor(app: app);
   //WidgetsFlutterBinding.ensureInitialized();
   //await Firebase.initializeApp();
 
@@ -75,7 +75,7 @@ void main() async{
         '/three': (context) => SignInPage(),//Sign in
         '/four': (context) => ProfilePage(signIn),//My profile
         '/five': (context) => EditProfilePage(signIn),//Edit my profile
-        '/six': (context) => CreateOfferPage(signIn),//Create offer
+        //'/six': (context) => CreateOfferPage(signIn),//Create offer
         '/myChats': (context) => ChatPage(signIn),
       },
       initialRoute: '/three',
@@ -137,6 +137,7 @@ class SignIn extends State<SignInPage>{
                         Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: TextFormField(
+                            key: Key("email"),
                             controller: emailCont,
                             decoration: InputDecoration(
                               fillColor: Colors.white,
@@ -149,6 +150,7 @@ class SignIn extends State<SignInPage>{
                         Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: TextFormField(
+                            key: Key("password"),
                             controller: passCont,
                             obscuringCharacter: '*',
                             obscureText: true,

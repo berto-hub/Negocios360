@@ -50,9 +50,10 @@ class OpporPageState extends State<OpportunityPage>{
   bool loading = false;
 
   int count = 0;
+  int countFin = 0;
   String res = "";
 
-  Future<void>getOpportunities() async {
+  Future<void> getOpportunities() async {
     opportunities = widget.profileData[0]['opportunities'].split('/');
     print(opportunities);
     print("holi: ${widget.profileData[0]}");
@@ -103,38 +104,57 @@ class OpporPageState extends State<OpportunityPage>{
 
     print("Antes");
     print(opportunities);
-    setState(() {
-      opportunities.removeRange(0, count);
-    });
-    print("Despues");
-    print(opportunities);
-
-    if(opportunities.length <= 10){
-      count = opportunities.length;
-    }else{
-      count =  10;
-    }
-
-    print("holi" + "${count}");
-
-    for(int i=0; i<count; i++){
-      http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOpportunity/${opportunities[i]}'));
-      var data = json.decode(response.body);
-      //coger solo unos datos determinados:
-      setState(() {
-        usersData.add(data['opportunity']);
-
-        idOffers.add(usersData[i]["idOffer"]);
-        idProfiles.add(usersData[i]["idUser"]);
-      });
-
-      print(data);
-    }
-
     /*setState(() {
-      count = count + 10;
+      opportunities.removeRange(0, count);
     });*/
+    /*print("Despues");
+    print(opportunities);*/
 
+    print("holi " + "${count}");
+    print("holi " + "${countFin}");
+
+    List opporsReversed = opportunities.reversed.toList();
+    print("Reversed: ${opporsReversed}");
+
+    if(opportunities.length > count){
+      if(opportunities.length <= (count + 10)){
+        countFin = opportunities.length;
+      }else{
+        countFin = count + 10;
+      }
+      print(usersData);
+      print(opporsReversed[count]);
+      for(int i=count; i<countFin; i++){
+        print(opporsReversed[count]);
+        http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOpportunity/${opporsReversed[i]}'));
+        var data = json.decode(response.body);
+        
+        setState(() {
+          usersData.add(data['opportunity']);
+
+          idOffers.add(usersData[i-count]["idOffer"]);
+          idProfiles.add(usersData[i-count]["idUser"]);
+        });
+        print("Data of more data");
+        print(usersData);
+        print(idOffers);
+        print(idProfiles);
+
+        print(data);
+      }
+
+      if(opportunities.length <= (count + 10)){
+        count = opportunities.length;
+      }else{
+        count = count + 10;
+      }
+    }else{
+      usersData = [];
+      idOffers = [];
+      idProfiles = [];
+    }
+
+    print("Data of more data");
     print(usersData);
     print(idOffers);
     print(idProfiles);
@@ -142,6 +162,9 @@ class OpporPageState extends State<OpportunityPage>{
 
   Future<void>getOffer() async {
     offers = [];
+    /*if(idOffers.length == 0){
+      return;
+    }*/
     for(int i=0;i<idOffers.length;i++){
       http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOffer/${idOffers[i]}'));
       var data = json.decode(response.body);
@@ -179,6 +202,7 @@ class OpporPageState extends State<OpportunityPage>{
 
   Future<void> getBlock() async{
     //await Future.delayed(const Duration(seconds: 1));
+    print("Block");
     print(usersData.length);
     setState(() {
       for(int i=0; i<usersData.length; i++){
@@ -215,35 +239,75 @@ class OpporPageState extends State<OpportunityPage>{
     return opportunity;
   }
 
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   List prof = [];
-  Future getProf(String id) async {
+  List idProf = [];
+  Future getProf() async {
     prof = [];
-    http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getProfile/${id}'));
-    var data = json.decode(response.body);
-    //coger solo unos datos determinados:
-    setState(() {
-      prof.add(data['profile']);
-    });
+    for(int i=0;i<idProf.length;i++){
+      http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getProfile/${idProf[i]}'));
+      var data = json.decode(response.body);
+      //coger solo unos datos determinados:
+      setState(() {
+        prof.add(data['profile']);
+      });
+    }
 
-    print(data);
+    //print(data);
     print(prof);
+
+    //return data['profile'];
+    /*return firestore
+      .collection("users")
+      .where("idUser", isEqualTo: id)
+      .get()
+      .then((result) {
+        for (DocumentSnapshot<Map<dynamic, dynamic>> user in result.docs) {
+          setState(() {
+            prof.add(user.data());
+            print(user.data());
+            print(user);
+          });
+        }
+        return prof;
+      });*/
   }
 
   List off = [];
-  Future getOff(String id) async {
+  List idOff = [];
+  Future getOff() async {
     off = [];
-    http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOffer/${id}'));
-    var data = json.decode(response.body);
-    //coger solo unos datos determinados:
-    setState(() {
-      off.add(data['offer']);
-    });
+    for(int i=0;i<idOff.length;i++){
+      http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOffer/${idOff[i]}'));
+      var data = json.decode(response.body);
+      //coger solo unos datos determinados:
+      setState(() {
+        off.add(data['offer']);
+      });
+    }
 
-    print(data);
+    //print(data);
     print(off);
+
+    /*return firestore
+      .collection("offers")
+      .where("idOffer", isEqualTo: id)
+      .get()
+      .then((result) {
+        for (DocumentSnapshot<Map<dynamic, dynamic>> offer in result.docs) {
+          setState(() {
+            off.add(offer.data());
+            print(offer.data());
+            print(offer);
+          });
+        }
+        return off;
+      });*/
+
+    //return data['offer'];
   }
 
-  List b = [];
+  List blockFilter = [];
   Future<void> Block() async{
     //await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -256,13 +320,17 @@ class OpporPageState extends State<OpportunityPage>{
           'state': filterOppors[i]["state"],
         };
         print(m);
-        b.add(m);
+        blockFilter.add(m);
       }
     });
     //block = [];
-    //usersData = [];
+    filterOppors = [];
+    prof = [];
+    off = [];
+    idProf = [];
+    idOff = [];
     loading = false;
-    print(b);
+    print(blockFilter);
   }
 
   /*Widget searchBar(BuildContext context) {
@@ -282,8 +350,10 @@ class OpporPageState extends State<OpportunityPage>{
     );
   }*/
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
   List filterOppors = [];
+  int countSearch = 0;
+  int countSea = 0;
+  late Future<dynamic> search;
 
   Future searchState(String state) {
     // code to convert the first character to uppercase
@@ -293,28 +363,69 @@ class OpporPageState extends State<OpportunityPage>{
     }else{
       searchKey = state[0] + state.substring(1);
     }*/
+    List opporsReversed = opportunities.reversed.toList();
+    print("Reversed: ${opporsReversed}");
+    List oppors = [];
     
-    return firestore
-      .collection("opportunities")
-      .where("idOpor", whereIn: opportunities)
-      .orderBy("state")
-      .startAt([searchKey])
-      .endAt([searchKey + "\uf8ff"])
-      .get()
-      .then((result) {
-        for (DocumentSnapshot<Map<dynamic, dynamic>> oppor in result.docs) {
-          setState(() {
-            filterOppors.add(oppor.data());
-            print(oppor.data()!["idUser"]);
-            print(oppor);
-          });
-          getOff(oppor.data()!["idOffer"]);
-          getProf(oppor.data()!["idUser"]);
-        }
+    if(opporsReversed.length <= 10){
+      countSearch = 1;
+      countSea = opporsReversed.length;
+    }else{
+      countSearch = 2;
+      countSea = 10;
+    }
 
-        print(filterOppors);
-        return filterOppors;
-      });
+    for(int i=0; i<countSea; i++){
+      oppors.add(opporsReversed[i]);
+    }
+
+    int numOppors = 0;
+    int num10 = 10;
+    for(int i=0; i<opporsReversed.length; i++){
+      if((i+1) == num10){
+        numOppors++;
+        num10 = num10 + 10;
+      }
+    }
+
+    for(int i=0; i<numOppors; i++){
+      //oppors.add(opporsReversed[i]);
+      search = firestore
+        .collection("opportunities")
+        .where("idOpor", whereIn: oppors)
+        .orderBy("state")
+        .startAt([searchKey])
+        .endAt([searchKey + "\uf8ff"])
+        .get()
+        .then((result) {
+          for (DocumentSnapshot<Map<dynamic, dynamic>> oppor in result.docs) {
+            setState(() {
+              /*Map m = {
+                'idOpor': oppor.data()!["idOpor"],
+                'user': getProf(oppor.data()!["idUser"]),
+                'name': oppor.data()!["name"],
+                'offer': getOff(oppor.data()!["idOffer"]),
+                'state': oppor.data()!["state"],
+              };*/
+              //print(m);
+              filterOppors.add(oppor.data());
+              idOff.add(oppor.data()!["idOffer"]);
+              idProf.add(oppor.data()!["idUser"]);
+              print(oppor.data());
+              print(oppor);
+            });
+          //getOff(oppor.data()!["idOffer"]);
+          //getProf(oppor.data()!["idUser"]);
+          //getOff(oppor.data()!["idOffer"]);
+          //getProf(oppor.data()!["idUser"]);
+          }
+
+          //print(filterOppors);
+          return filterOppors;
+        });
+    }
+
+    return search;
   }
 
   /*Future<List> searchStateMinus(String state) {
@@ -351,12 +462,14 @@ class OpporPageState extends State<OpportunityPage>{
         setState(() {
           firstSearch = false;
           filterOppors = [];
+          blockFilter = [];
         });
       }
       if(searchView.text.isEmpty){
         setState(() {
           firstSearch = true;
           filterOppors = [];
+          blockFilter = [];
           //query = "";
         });
       }
@@ -364,16 +477,30 @@ class OpporPageState extends State<OpportunityPage>{
         setState(() {
           firstSearch = false;
           filterOppors = [];
+          blockFilter = [];
         });
         if(searchView.text == "Recompensada"){
-          searchState("Ya recompensada");
+          searchState("Ya recompensada").then((value) => 
+            getProf().then((value) => 
+              getOff().then((value) => 
+                Block()
+              )
+            )
+          );
         }
-        searchState(searchView.text);
+        searchState(searchView.text).then((value) => 
+          getProf().then((value) => 
+            getOff().then((value) => 
+              Block()
+            )
+          )
+        );
       }
       if(searchView.text == "Todos"){
         setState(() {
           firstSearch = true;
           filterOppors = [];
+          blockFilter = [];
         });
       }/*else{
         setState(() {
@@ -709,6 +836,10 @@ class OpporPageState extends State<OpportunityPage>{
             value: 'Recompensada',
             child: Text('Recompensada'),
           ),
+          PopupMenuItem<String>(
+            value: 'Archivada',
+            child: Text('Archivada'),
+          ),
         ]
       ),
     );
@@ -938,8 +1069,8 @@ class OpporPageState extends State<OpportunityPage>{
   }
 
   Widget performSearch() {
-    Map filter = {};
-    List filterList = [];
+    //Map filter = {};
+    //List filterList = [];
     
     /*if(res == "Todos"){
       setState(() {
@@ -965,7 +1096,7 @@ class OpporPageState extends State<OpportunityPage>{
       }
     }*/
 
-    if(filterOppors == []){
+    /*if(filterOppors == []){
       return Container(
         child: Text("No existen oportunidades con el estado ${res}")
       );
@@ -983,20 +1114,43 @@ class OpporPageState extends State<OpportunityPage>{
       );
     }
 
+    if(blockFilter.length != 0){
+      return Center(
+        child: Container(
+          padding: EdgeInsets.all(5),
+          width: 50,
+          height: 50,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     int length = 0;
 
     if(off.length <= prof.length){
       length = off.length;
     }else{
       length = prof.length;
+    }*/
+
+    if(blockFilter == null){
+      return CircularProgressIndicator();
     }
-
-
     return Flexible(
       child: ListView.builder(
-        //controller: scroll,
-        itemCount: length,
+        controller: scroll,
+        itemCount: blockFilter == null ? 0 : blockFilter.length,
         itemBuilder: (BuildContext context, int index){
+          /*if(index == blockFilter.length){
+            return Center(
+              child: Container(
+                padding: EdgeInsets.all(5),
+                width: 30,
+                height: 30,
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }*/
           return Card(
             child: SingleChildScrollView(
               child: Column(
@@ -1012,8 +1166,8 @@ class OpporPageState extends State<OpportunityPage>{
                             padding: EdgeInsets.only(bottom: 5.0),
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              "Facilitada por ${prof[index]["name"]}".length <= 20 ?
-                              "Facilitada por ${prof[index]["name"]}" : "Facilitada por ${prof[index]["name"]}".substring(0, 20) + "...",
+                              "Facilitada por ${blockFilter[index]["user"]}".length <= 20 ?
+                              "Facilitada por ${blockFilter[index]["user"]}" : "Facilitada por ${blockFilter[index]["user"]}".substring(0, 20) + "...",
                               style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
                             ),
                           ),
@@ -1021,8 +1175,8 @@ class OpporPageState extends State<OpportunityPage>{
                             padding: EdgeInsets.only(bottom: 5.0),
                             alignment: Alignment.centerLeft,
                             child:Text(
-                              "${filterOppors[index]["name"]}".length <= 20 ?
-                              "${filterOppors[index]["name"]}" : "${filterOppors[index]["name"]}".substring(0, 20) + "...",
+                              "${blockFilter[index]["name"]}".length <= 20 ?
+                              "${blockFilter[index]["name"]}" : "${blockFilter[index]["name"]}".substring(0, 20) + "...",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
@@ -1033,15 +1187,15 @@ class OpporPageState extends State<OpportunityPage>{
                             padding: EdgeInsets.only(bottom: 5.0),
                             alignment: Alignment.centerLeft,
                             child:Text(
-                              "${off[index]["title"]}".length <= 20 ?
-                              "${off[index]["title"]}" : "${off[index]["title"]}".substring(0, 20) + "...",
+                              "${blockFilter[index]["offer"]}".length <= 20 ?
+                              "${blockFilter[index]["offer"]}" : "${blockFilter[index]["offer"]}".substring(0, 20) + "...",
                               style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
                             ),
                           ),
                         ],
                       ),
                       trailing: Text(
-                      "${filterOppors[index]["state"]}".toUpperCase(),
+                      "${blockFilter[index]["state"]}".toUpperCase(),
                         style: TextStyle(color: Color(0xff1B2434), fontSize: 16, fontFamily: 'roboto',),
                       ),
                       onTap: (){
@@ -1049,12 +1203,12 @@ class OpporPageState extends State<OpportunityPage>{
                           context,
                           MaterialPageRoute(
                             builder: (BuildContext context){
-                              Future<Map> oppor = getOpportunity(filterOppors[index]["idOpor"]);
+                              Future<Map> oppor = getOpportunity(blockFilter[index]["idOpor"]);
                               return DetailOpporPage(
                                 index,
                                 widget.profileData,
                                 oppor,
-                                off[index]["title"]
+                                blockFilter[index]["offer"]
                               );
                             }
                           )
@@ -1062,7 +1216,7 @@ class OpporPageState extends State<OpportunityPage>{
                             if(value[1] != ""){ //Pasando el indice al ir a la pagina Oportunity.dart
                               print(value),
                               setState((){
-                                block[value[0]]["state"] = value[1];
+                                blockFilter[value[0]]["state"] = value[1];
                                 searchView.text = value[1];
                               })
                             }

@@ -494,6 +494,7 @@ class Message extends State<MessagePage>{
         title: Text("Mensajes con ${usersData["name"]}"),
         backgroundColor: Colors.blue.shade800,
         leading: IconButton(
+          key: Key("Back"),
           icon: Icon(Icons.arrow_back_ios),
           onPressed: (){
             if(docs[0].exists){
@@ -946,6 +947,7 @@ class Message extends State<MessagePage>{
                           child: Padding(
                             padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                             child: TextField(
+                              key: Key("message"),
                               style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
                               keyboardType: TextInputType.text,
                               maxLines: null,
@@ -961,6 +963,7 @@ class Message extends State<MessagePage>{
                         ),
                       ),
                       IconButton(
+                        key: Key("sendMessage"),
                         onPressed: (){
                           createMessage();
                           //addMessage();

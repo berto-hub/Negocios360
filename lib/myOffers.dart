@@ -159,9 +159,11 @@ class OfferPageState extends State<OfferPage>{
           query = searchView.text;
         });
       }*/
+
       if(searchView.text.length != result.length){
+
         setState(() {
-          firstSearch = false;
+          firstSearch = true;
           filterOffers = [];
         });
       }
@@ -172,13 +174,13 @@ class OfferPageState extends State<OfferPage>{
           //query = "";
         });
       }
-      if(searchView.text.isNotEmpty){
+      /*if(searchView.text.isNotEmpty){
         setState(() {
           firstSearch = false;
         });
-        searchUsersMayus(searchView.text);
-        searchUsersMinus(searchView.text);
-      }
+        //searchUsersMayus(searchView.text);
+        //searchUsersMinus(searchView.text);
+      }*/
     });
   }
 
@@ -264,7 +266,7 @@ class OfferPageState extends State<OfferPage>{
                 padding: const EdgeInsets.all(10),
                 child: MaterialButton(
                   height: 50,
-                  color: Colors.blue.shade800,
+                  color: Colors.blue.shade900,
                   onPressed: (){
                     Navigator.push(
                       context,
@@ -327,6 +329,25 @@ class OfferPageState extends State<OfferPage>{
                 hintText: "Buscar en mis ofertas",
                 hintStyle: TextStyle(
                   color: Colors.grey
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search), 
+                  onPressed: (){
+                    /*const time = Duration(milliseconds: 5000);
+                    Timer timer = new Timer(time, () {
+                      setState(() {
+                        duration = true;
+                      });
+                    });*/
+                    setState(() {
+                      result = searchView.text;
+                      if(firstSearch == true){
+                        searchUsersMayus(result);
+                        searchUsersMinus(result);
+                      }
+                      firstSearch = false;
+                    });
+                  },
                 ),
               ),
               textAlign: TextAlign.left,
@@ -404,7 +425,6 @@ class OfferPageState extends State<OfferPage>{
   Widget CreateListView(){
     return Flexible(
       child: Container(
-        padding: EdgeInsets.only(left: 25),
         child: ListView.builder(
           itemCount: offersData == null ? 0 : offersData.length,
           //scrollDirection: Axis.horizontal,
@@ -420,37 +440,40 @@ class OfferPageState extends State<OfferPage>{
                 ),
               );
             }
-            return ListTile(
-              contentPadding: EdgeInsets.all(10.0),
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(offersData[index]["image"]),
-                radius: 30.0,
-              ),
-              title: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Text("${offersData[index]["title"]}",
-                  style: TextStyle(color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
-                    fontWeight: FontWeight.bold,
+            return Card(
+              
+              child: ListTile(
+                contentPadding: EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 8.0),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(offersData[index]["image"]),
+                  radius: 30.0,
+                ),
+                title: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text("${offersData[index]["title"]}",
+                    style: TextStyle(color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              subtitle: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Text("${offersData[index]["description"]}".length >= 30 ?
-                  "${offersData[index]["description"]}".substring(0, 30) + "..." : "${offersData[index]["description"]}",
-                  style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+                subtitle: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text("${offersData[index]["description"]}".length >= 30 ?
+                    "${offersData[index]["description"]}".substring(0, 30) + "..." : "${offersData[index]["description"]}",
+                    style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+                  ),
                 ),
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context){
+                        return DetailOfferPage(offersData[index], widget.profileData);
+                      }
+                    )
+                  );
+                },
               ),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context){
-                      return DetailOfferPage(offersData[index], widget.profileData);
-                    }
-                  )
-                );
-              },
             );
           }
         ),
@@ -495,37 +518,39 @@ class OfferPageState extends State<OfferPage>{
               ),
             );
           }
-          return ListTile(
-            contentPadding: EdgeInsets.all(10.0),
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(filterList[index]["image"]),
-              radius: 30.0,
-            ),
-            title: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Text("${filterList[index]["title"]}",
-                style: TextStyle(color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
-                  fontWeight: FontWeight.bold,
+          return Card(
+            child: ListTile(
+              contentPadding: EdgeInsets.all(10.0),
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(filterList[index]["image"]),
+                radius: 30.0,
+              ),
+              title: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text("${filterList[index]["title"]}",
+                  style: TextStyle(color: Color(0xff1B2434), fontSize: 17, fontFamily: 'roboto',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Text("${filterList[index]["description"]}".length >= 30 ?
-                "${filterList[index]["description"]}".substring(0, 30) + "..." : "${filterList[index]["description"]}",
-                style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+              subtitle: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text("${filterList[index]["description"]}".length >= 30 ?
+                  "${filterList[index]["description"]}".substring(0, 30) + "..." : "${filterList[index]["description"]}",
+                  style: TextStyle(color: Color(0xff1B2434), fontSize: 15, fontFamily: 'roboto',),
+                ),
               ),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context){
+                      return DetailOfferPage(filterList[index], widget.profileData);
+                    }
+                  )
+                );
+              },
             ),
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context){
-                    return DetailOfferPage(filterList[index], widget.profileData);
-                  }
-                )
-              );
-            },
           );
         }
       )

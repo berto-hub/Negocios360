@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:negocios360app/Offer.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'editMyProfile.dart';
@@ -422,6 +421,7 @@ class Profile extends State<OtherProfilePage>{
       appBar: AppBar(
         title: Text(usersData["name"]),
         leading: IconButton(
+          key: Key("Back"),
           icon: Icon(Icons.arrow_back_ios),
           onPressed: (){
             Navigator.pop(context);
@@ -1106,7 +1106,7 @@ class Profile extends State<OtherProfilePage>{
                                   )
                                 ),
                                 backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.blue.shade800,
+                                  Colors.blue.shade900,
                                 ),
                               ),
                             ),
@@ -1194,7 +1194,7 @@ class Profile extends State<OtherProfilePage>{
               ),
             ),
             style: TextButton.styleFrom(
-              backgroundColor: Colors.blue.shade800,
+              backgroundColor: Colors.blue.shade900,
             ),
           ),
         ],

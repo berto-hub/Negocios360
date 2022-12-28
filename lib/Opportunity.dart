@@ -97,6 +97,7 @@ class Opportunity extends State<DetailOpporPage>{
           title: Text("Detalle de la oportunidad"),
           backgroundColor: Colors.blue.shade800,
           leading: IconButton(
+            key: Key("Back"),
             onPressed: (){
               Navigator.pop(
                 context,

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:negocios360app/Drawer.dart';
-import 'package:negocios360app/Offer.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'editBaseReward.dart';
@@ -614,7 +613,7 @@ class Profile extends State<ProfilePage>{
                               padding: EdgeInsets.symmetric(horizontal: 35.0, vertical:20.0,),
                               child: MaterialButton(
                                 child: botonRecompensaBase(),
-                                color: Color(0xff1B2434),
+                                color: Colors.blue.shade900,
                                 splashColor: Color(0xff303C50),
                                 onPressed: (){
                                   Navigator.push(context,
@@ -714,7 +713,7 @@ class Profile extends State<ProfilePage>{
               minWidth: MediaQuery.of(context).size.width * 0.35,
               height: MediaQuery.of(context).size.height * 0.07,
               child: botonOferta(),
-              color: Color(0xff1B2434),
+              color: Colors.blue.shade900,
               splashColor: Color(0xff303C50),
               onPressed: (){
                 Navigator.push(

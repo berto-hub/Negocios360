@@ -219,16 +219,20 @@ class Teams extends State<TeamsPage>{
   Map t = {};
   bool change = false;
 
-  Future<List> searchUsersMayus(String name) {
+  void searchUsersMayus(String name) {//Future<List>
     // code to convert the first character to uppercase
+    bool filtred = false;
     String searchKey;
     if(name[0] != name[0].toUpperCase()){
       searchKey = name[0].toUpperCase() + name.substring(1);
     }else{
       searchKey = name[0] + name.substring(1);
     }
-    
-    return firestore
+
+    filterTeams = teamData.where((t) => 
+      t["name"].toUpperCase().contains(searchKey)).toList();
+
+    /*return firestore
       .collection("teams")
       .orderBy("name")
       .startAt([searchKey])
@@ -236,28 +240,43 @@ class Teams extends State<TeamsPage>{
       .get()
       .then((result) {
         for (DocumentSnapshot<Map<dynamic, dynamic>> team in result.docs) {
-          setState(() {
-            t = team.data()!;
-            t["id"] = team.id;
-            filterTeams.add(t);
-            print(t);
-          });
+          print(idTeams[0]);
+          for(int i=0; i<idTeams.length;i++){
+            if(idTeams[i] == team.data()!["id"]){
+              print(idTeams[i] + team.data()!["id"]);
+              setState(() {
+                filtred = true;
+              }); 
+            }
+          }
+          if(filtred == true){
+            setState(() {
+              t = team.data()!;
+              t["id"] = team.id;
+              filterTeams.add(t);
+              print(t);
+            });
+          }
         }
 
         return filterTeams;
-      });
+      });*/
   }
 
-  Future<List> searchUsersMinus(String name) {
+  void searchUsersMinus(String name) {
     // code to convert the first character to uppercase
+    bool filtred = false;
     String searchKey;
     if(name[0] != name[0].toLowerCase()){
       searchKey = name[0].toLowerCase() + name.substring(1);
     }else{
       searchKey = name[0] + name.substring(1);
     }
-    
-    return firestore
+
+    filterTeams = teamData.where((t) => 
+      t["name"].toLowerCase().contains(searchKey)).toList();
+
+    /*return firestore
       .collection("teams")
       .orderBy("name")
       .startAt([searchKey])
@@ -265,16 +284,25 @@ class Teams extends State<TeamsPage>{
       .get()
       .then((result) {
         for (DocumentSnapshot<Map<dynamic, dynamic>> team in result.docs) {
-          setState(() {
-            t = team.data()!;
-            t["id"] = team.id;
-            filterTeams.add(t);
-            print(t);
-          });
+          for(int i=0; i<idTeams.length;i++){
+            if(idTeams[i] == team.data()!["id"]){
+              setState(() {
+                filtred = true;
+              });
+            }
+          }
+          if(filtred == true){
+            setState(() {
+              t = team.data()!;
+              t["id"] = team.id;
+              filterTeams.add(t);
+              print(t);
+            });
+          }
         }
 
         return filterTeams;
-      });
+      });*/
   }
 
   @override
@@ -711,9 +739,9 @@ class Teams extends State<TeamsPage>{
                         "${filterList[index]["name"]}",
                         style: TextStyle(
                           color: Color(0xff1B2434),
-                          fontSize: 15,
-                          fontFamily: 'roboto',
-                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                            fontFamily: 'roboto',
+                            fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

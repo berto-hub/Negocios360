@@ -127,6 +127,7 @@ class Offer extends State<DetailOfferPage>{
         title: Text("Detalle de la oferta"),
         backgroundColor: Colors.blue.shade800,
         leading: IconButton(
+          key: Key("Back"),
           icon: Icon(Icons.arrow_back_ios),
           onPressed: (){
             Navigator.pop(context);

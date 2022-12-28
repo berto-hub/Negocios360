@@ -45,6 +45,7 @@ class OpporPageState extends State<SendedOpporPage>{
   bool firstSearch = true;
 
   int count = 0;
+  int countFin = 0;
   String res = "";
 
   bool loading = false;
@@ -79,7 +80,9 @@ class OpporPageState extends State<SendedOpporPage>{
     int c = 0;
     //block = [];
     usersData = [];
-    count = count + 10;
+    setState(() {
+      count = count + 10;
+    });
 
     /*if((count + 3) >= usersData.length){
       c = usersData.length;
@@ -88,7 +91,9 @@ class OpporPageState extends State<SendedOpporPage>{
     }*/
 
     print("holi " + "${count}");
-
+    print("holi " + "${countFin}");
+    print("Antiguo array ${usersData}");
+  
     http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/moreOpportunitiesUser/${idUser}/${count}'));
     var data = json.decode(response.body);
     print(data);
@@ -96,8 +101,9 @@ class OpporPageState extends State<SendedOpporPage>{
     setState(() {
       for(int i=0; i<data["opportunity"].length; i++){
         usersData.add(data['opportunity'][i]);
+        print("Nuevo elemento: ${data['opportunity'][i]}");
       }
-      print(usersData);
+      print("Nuevo array ${usersData}");
       
       for(int i=0; i<usersData.length;i++){
         idOffers.add(usersData[i]["idOffer"]);
@@ -191,20 +197,23 @@ class OpporPageState extends State<SendedOpporPage>{
   }
 
   List off = [];
+  List idOff = [];
   Future getOff(String id) async {
     off = [];
-    http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOffer/${id}'));
-    var data = json.decode(response.body);
-    //coger solo unos datos determinados:
-    setState(() {
-      off.add(data['offer']);
-    });
+    for(int i=0;i<idOff.length;i++){
+      http.Response response = await http.get(Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/getOffer/${idOff[i]}'));
+      var data = json.decode(response.body);
+      //coger solo unos datos determinados:
+      setState(() {
+        off.add(data['offer']);
+      });
+    }
 
-    print(data);
+    //print(data);
     print(off);
   }
 
-  List bl = [];
+  List blockFilter = [];
   Future<void> Block() async{
     //await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -216,18 +225,21 @@ class OpporPageState extends State<SendedOpporPage>{
           'state': filterOppors[i]["state"],
         };
         print(m);
-        bl.add(m);
+        blockFilter.add(m);
       }
     });
     //block = [];
-    //usersData = [];
-    print(b);
+    filterOppors = [];
+    off = [];
+    idOff = [];
+    loading = false;
+    print(blockFilter);
   }
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   List filterOppors = [];
 
-  Future searchStateMayus(String state) {
+  /*Future searchStateMayus(String state) {
     // code to convert the first character to uppercase
     String searchKey = ""; //state[0].toUpperCase() + state.substring(1);
     if(state[0] != state[0].toUpperCase()){
@@ -258,38 +270,80 @@ class OpporPageState extends State<SendedOpporPage>{
         print(filterOppors);
         return filterOppors;
       });
-  }
+  }*/
 
-Future searchStateMinus(String state) {
+  int countSearch = 0;
+  int countSea = 0;
+  late Future<dynamic> search;
+
+  List opportunities = [];
+
+Future searchState(String state) {
     // code to convert the first character to uppercase
-    String searchKey = ""; //state[0].toUpperCase() + state.substring(1);
-    if(state[0] != state[0].toLowerCase()){
-      searchKey = state[0].toLowerCase() + state.substring(1);
-    }else{
-      searchKey = state[0] + state.substring(1);
-    }
+    String searchKey = state[0].toUpperCase() + state.substring(1);
     
-    return firestore
-      .collection("opportunities")
-      .where("idUser", isEqualTo: widget.profileData[0]["id"])
-      .orderBy("state")
-      .startAt([searchKey])
-      .endAt([searchKey + "\uf8ff"])
-      .get()
-      .then((result) {
-        for (DocumentSnapshot<Map<dynamic, dynamic>> oppor in result.docs) {
-          setState(() {
-            filterOppors.add(oppor.data());
-            print(oppor.data()!["idUser"]);
-            print(oppor);
-          });
-          getOff(oppor.data()!["idOffer"]);
-          //getProf(oppor.data()!["idUser"]);
-        }
+    /*List opporsReversed = opportunities.reversed.toList();
+    print("Reversed: ${opporsReversed}");
+    List oppors = [];
+    
+    if(opporsReversed.length <= 10){
+      countSearch = 1;
+      countSea = opporsReversed.length;
+    }else{
+      countSearch = 2;
+      countSea = 10;
+    }
 
-        print(filterOppors);
-        return filterOppors;
-      });
+    for(int i=0; i<countSea; i++){
+      oppors.add(opporsReversed[i]);
+    }
+
+    int numOppors = 0;
+    int num10 = 10;
+    for(int i=0; i<opporsReversed.length; i++){
+      if((i+1) == num10){
+        numOppors++;
+        num10 = num10 + 10;
+      }
+    }*/
+
+    //for(int i=0; i<numOppors; i++){
+      //oppors.add(opporsReversed[i]);
+    return firestore
+        .collection("opportunities")
+        .where("idUser", isEqualTo: widget.profileData[0]["id"])
+        .orderBy("state")
+        .startAt([searchKey])
+        .endAt([searchKey + "\uf8ff"])
+        .get()
+        .then((result) {
+          for (DocumentSnapshot<Map<dynamic, dynamic>> oppor in result.docs) {
+            setState(() {
+              /*Map m = {
+                'idOpor': oppor.data()!["idOpor"],
+                'user': getProf(oppor.data()!["idUser"]),
+                'name': oppor.data()!["name"],
+                'offer': getOff(oppor.data()!["idOffer"]),
+                'state': oppor.data()!["state"],
+              };*/
+              //print(m);
+              filterOppors.add(oppor.data());
+              idOff.add(oppor.data()!["idOffer"]);
+              print(oppor.data());
+              print(oppor);
+            });
+          //getOff(oppor.data()!["idOffer"]);
+          //getProf(oppor.data()!["idUser"]);
+          //getOff(oppor.data()!["idOffer"]);
+          //getProf(oppor.data()!["idUser"]);
+          }
+
+          //print(filterOppors);
+          return filterOppors;
+        });
+    //}
+
+    //return search;
   }
 
   OpporPageState(){
@@ -320,11 +374,9 @@ Future searchStateMinus(String state) {
         //List oppors = widget.profileData[0]["opportunities"].split("/");
         //for(int i=0; i<oppors.length; i++){
         if(searchView.text == "Recompensada"){
-          searchStateMayus("Ya recompensada");
-          searchStateMinus("Ya recompensada");
+          searchState("Ya recompensada");
         }
-        searchStateMayus(searchView.text);
-        searchStateMinus(searchView.text);
+        searchState(searchView.text);
         //}
       }
       if(searchView.text == "Todos"){
@@ -357,7 +409,7 @@ Future searchStateMinus(String state) {
         getBlock()));
     
     scroll.addListener(() {
-      if(scroll.position.pixels >= scroll.position.maxScrollExtent){
+      if(scroll.position.pixels == scroll.position.maxScrollExtent){
         moreData();
         print("more data");
       }
@@ -370,6 +422,7 @@ Future searchStateMinus(String state) {
         title: Text('Oportunidades enviadas'),
         backgroundColor: Colors.blue.shade800,
         leading: IconButton(
+          key: Key("Back"),
           onPressed: (){
             Navigator.pop(context);
           },

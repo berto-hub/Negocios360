@@ -141,6 +141,7 @@ class OportunityCreation extends State<SecondPage> {
                       ),
                       padding: const EdgeInsets.all(3.0),
                       child: TextField(
+                        key: Key("name"),
                         style: TextStyle(color: Color(0xff1B2434), fontSize: 15,fontFamily: 'roboto',),
                         controller: nameCont,
                         decoration: InputDecoration(
@@ -167,6 +168,7 @@ class OportunityCreation extends State<SecondPage> {
                       ),
                       padding: const EdgeInsets.all(3.0),
                       child: TextField(
+                        key: Key("telephone"),
                         style: TextStyle(color: Color(0xff1B2434), fontSize: 15,fontFamily: 'roboto',),
                         controller: telCont,
                         decoration: InputDecoration(
@@ -193,6 +195,7 @@ class OportunityCreation extends State<SecondPage> {
                       ),
                       padding: const EdgeInsets.all(3.0),
                       child: TextField(
+                        key: Key("email"),
                         style: TextStyle(color: Color(0xff1B2434), fontSize: 15,fontFamily: 'roboto',),
                         controller: emailCont,
                         decoration: InputDecoration(
@@ -383,7 +386,7 @@ class OportunityCreation extends State<SecondPage> {
         Uri.parse('https://us-central1-negocios360-5683c.cloudfunctions.net/app/createOpportunity'), 
         body: ({
           'idOpor': id,
-          'idOffer': widget.idOffer,
+          'idOffer': widget.idOffer != "" ? widget.idOffer : "",
           'idUser': widget.myProfile[0]["id"],
           'description': desCont.text, 
           'name': nameCont.text,
@@ -394,6 +397,8 @@ class OportunityCreation extends State<SecondPage> {
 
       //print(id);
       //messageUserOpor(id);
+      ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text("Se ha recomendado el usuario ${nameCont.text}")));
 
       if(response.statusCode==204){
         debugPrint("Inserted correctly.");
